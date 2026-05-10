@@ -1,64 +1,43 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="utf-8" />
   <title>WebGIS WMS dan WFS</title>
-
   <!-- Leaflet CSS -->
   <link rel="stylesheet"
     href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
   <style>
     body {
       margin: 0;
     }
-
     #map {
       height: 100vh;
       width: 100%;
     }
   </style>
 </head>
-
 <body>
-
 <div id="map"></div>
-
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
 <script>
 
-  // =========================
   // MEMBUAT PETA
-  // =========================
-
   var map = L.map('map').setView([37.8, -96], 4);
 
-  // =========================
   // BASEMAP OSM
-  // =========================
-
   var osm = L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     {
       attribution: '&copy; OpenStreetMap contributors'
     }
   );
-
   osm.addTo(map);
 
-  // =========================
-  // BASEMAP NONE (kosong)
-  // =========================
-
+  // BASEMAP NONE 
   var none = L.layerGroup();
 
-  // =========================
   // WMS LAYER
-  // =========================
-
   var wmsLayer = L.tileLayer.wms(
     'https://ahocevar.com/geoserver/wms',
     {
@@ -68,12 +47,8 @@
     }
   ).addTo(map);
 
-  // =========================
   // WFS LAYER
-  // =========================
-
   var wfsLayer;
-
   fetch(
     'https://ahocevar.com/geoserver/wfs?' +
     'service=WFS&' +
@@ -82,49 +57,35 @@
     'typeName=topp:states&' +
     'outputFormat=application/json'
   )
-
   .then(response => response.json())
-
   .then(data => {
-
     wfsLayer = L.geoJSON(data, {
-
 		style: {
 			color: 'red',        // warna outline
 			weight: 2,           // ketebalan garis
 			fillOpacity: 0       // transparan total
 		},
-
 		onEachFeature: function(feature, layer) {
-
 			layer.bindPopup(
 				'<b>Nama State:</b> ' +
 				feature.properties.STATE_NAME
 			);
-
 		}
-
 	}).addTo(map);
 
-    // =========================
     // BASEMAP CONTROL
-    // =========================
-
     var baseMaps = {
       "OSM": osm,
       "None": none
     };
 
-    // =========================
     // OVERLAY CONTROL
-    // =========================
-
     var overlayMaps = {
       "WMS Layer": wmsLayer,
       "WFS Layer": wfsLayer
     };
-
-    // Layer control
+	
+    // LAYER CONTROL
     L.control.layers(baseMaps, overlayMaps).addTo(map);
 	
 	// SCALE BAR
@@ -133,6 +94,5 @@
   });
 
 </script>
-
 </body>
 </html>
