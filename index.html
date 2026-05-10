@@ -61,9 +61,9 @@
   .then(data => {
     wfsLayer = L.geoJSON(data, {
 		style: {
-			color: 'red',        // warna outline
-			weight: 2,           // ketebalan garis
-			fillOpacity: 0       // transparan total
+			color: 'red',       
+			weight: 2,           
+			fillOpacity: 0     
 		},
 		onEachFeature: function(feature, layer) {
 			layer.bindPopup(
