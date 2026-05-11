@@ -17,7 +17,33 @@
   </style>
 </head>
 <body>
+<input type="text" id="searchBox"
+placeholder="Cari state..."
+style="
+position:absolute;
+top:10px;
+left:50px;
+z-index:1000;
+padding:8px;
+width:200px;
+">
+<div id="message"
+style="
+position:absolute;
+color:red;
+top:55px;
+left:50px;
+z-index:1000;
+background:white;
+padding:6px 10px;
+border-radius:5px;
+font-size:14px;
+display:none;
+box-shadow:0 0 5px rgba(0,0,0,0.3);
+">
+</div>
 <div id="map"></div>
+
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
@@ -61,9 +87,9 @@
   .then(data => {
     wfsLayer = L.geoJSON(data, {
 		style: {
-			color: 'green',       
+			color: 'green',        
 			weight: 2,           
-			fillOpacity: 0     
+			fillOpacity: 0       
 		},
 		onEachFeature: function(feature, layer) {
 			layer.bindPopup(
@@ -91,6 +117,36 @@
 	// SCALE BAR
 	L.control.scale().addTo(map);
 	
+	// FITUR SEARCH
+	document.getElementById("searchBox")
+	.addEventListener("keypress", function(e) {
+	  if (e.key === "Enter") {
+		var keyword = this.value.toLowerCase();
+		var found = false;
+		wfsLayer.eachLayer(function(layer) {
+		  var stateName =
+		  layer.feature.properties.STATE_NAME.toLowerCase();
+		  if (stateName.includes(keyword)) {
+			found = true;
+			map.fitBounds(layer.getBounds());
+			layer.openPopup();
+		  }
+		});
+		var message =
+		document.getElementById("message");
+		if (!found) {
+		  message.style.display = "block";
+		  message.innerHTML =
+		  "State tidak ditemukan";
+		  setTimeout(function() {
+			message.style.display = "none";
+			}, 2000);
+		}
+		else {
+		  message.style.display = "none";
+		}
+	  }
+	});
   });
 
 </script>
